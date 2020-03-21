@@ -5,13 +5,24 @@ import "./index.css"
 
 //TODO: Make the search function work with
 //      your fight finder API.
+//TODO: Generate results that are NOT hard-coded!
 
 class SearchModule extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            searchText: ""
+        }
+    }
+
     render() {
         return (
             <div>
-                <SearchBar />
-                <SearchResults results={this.props.results}/>
+                <SearchBar
+                    searchText={this.state.searchText} />
+                <SearchResults
+                    searchText={this.state.searchText}
+                    results={this.props.results} />
             </div>
         );
     }
@@ -19,24 +30,72 @@ class SearchModule extends React.Component {
 
 class SearchBar extends React.Component {
     render() {
+
+        console.log("HEY IN SearchBar render()!!!");
+        console.log(this.props.searchText);
+
         return (
-            <form>
-                <input type="text" placeholder="Search..." />
+            <form id="search_form" onSubmit={this._do_search}>
+                <input id="search_box" type="text" placeholder="Search..." />
                 <button type="button">Search</button>
             </form>
         );
+    }
+
+    _do_search = (e) => {
+        e.preventDefault();
+        console.log("IN _test. Search value is...");
+        console.log(document.getElementById("search_box").value);
+        //console.log(this.props.searchText);
+
+        //THINK: Need to change props here???
+
+        /*
+        //NOTE: Can't seem to do this...
+        <SearchResults results = {RESULTS} />
+        */
     }
 }
 
 class SearchResults extends React.Component {
     render() {
+        const searchText = this.props.searchText;
+
+        console.log("HEY IN SearchResults render()!!!");
+        console.log(this.props.searchText);
+        console.log(searchText);
+
+        /*
+        //TODO: Verify if this is the right way to go about
+        //      doing things...
+        //Make AJAX request
+        fetch("http://localhost:5000/data/hatsu_hioki")
+        .then(res => res.json())
+        .then(
+            (result) => {
+                this.setState({
+                    isLoaded: true,
+                    result: result
+                });
+
+                //FOR TESTING
+                console.log(result);
+          },
+          (error) => {
+              this.setState({
+                  isLoaded: true,
+                  error
+              });
+            }
+        )
+        */
+
         const rows = [];
         this.props.results.forEach((result) => {
             rows.push(<RecordRow
                         result={result}
                         key={result.row_id} />);
         });
-
         return (
             <table>
                 <thead>
@@ -63,7 +122,7 @@ class RecordRow extends React.Component {
     }
 }
 
-//HARD-CODE RESULTS FOR NOW
+//HARD-CODED RESULTS
 const RESULTS = [
   { row_id: 1, opponent: "Hulk Hogan", outcome: "W" },
   { row_id: 2, opponent: "Ultimate Warrior", outcome: "L" },
@@ -73,7 +132,7 @@ const RESULTS = [
 
 
 ReactDOM.render(
-    <SearchModule results={RESULTS} />,
+    <SearchModule results={[]} />,
     document.getElementById("root")
 );
 
